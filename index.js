@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db'); // Import the MongoDB connection function
 const userRoute = require('./routes/userRoute'); // Import the user route
+const artistRoute = require('./routes/artistRoute'); // Import the artist route
 
 // Load environment variables from .env file
 dotenv.config();
@@ -17,6 +18,7 @@ connectDB();
 app.use(express.json());
 
 app.use('/api/users', userRoute);
+app.use('/api/artists', artistRoute);
 
 
 app.get('/', (req, res) => {
