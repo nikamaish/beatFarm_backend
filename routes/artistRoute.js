@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup,signin, updateProfile } = require('../controllers/artistController');
+const { signup,signin, getByIdArtist, getAllArtist, deleteArtistProfile, updateProfile } = require('../controllers/artistController');
 const { uploadProfilePicture, uploadHeaderImage } = require('../controllers/artistController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
@@ -7,16 +7,15 @@ const router = express.Router();
 // Artist Signup Route
 router.post('/signup', signup);
 
-
 router.post('/signin', signin);
 
-// Profile Update Route (assuming you use an authentication middleware like JWT)
-router.put('/profile',authMiddleware, updateProfile);
+router.put('/profile', authMiddleware, uploadProfilePicture, uploadHeaderImage, updateProfile);
+
+router.get("/allartists", authMiddleware, getAllArtist); // Get all artists
+router.get("/:id", authMiddleware, getByIdArtist); // Get artist by ID
+router.delete("/:id", authMiddleware, deleteArtistProfile); // Delete artist
 
 
-
-// Assuming you have a route to update the profile
-router.post("/profile", uploadProfilePicture, uploadHeaderImage, updateProfile);
 
 
   module.exports = router;

@@ -31,8 +31,8 @@ const artistSchema = new mongoose.Schema({
     type: String, // You can store the URL of the header image here
   },
   socialMediaLinks: {
-    twitter: { type: String },
-    instagram: { type: String },
+    // twitter: { type: String },
+    // instagram: { type: String },
     facebook: { type: String },
     website: { type: String },
   },
