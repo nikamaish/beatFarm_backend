@@ -1,5 +1,5 @@
 const express = require('express');
-const { signup,signin, getByIdArtist, getAllArtist, deleteArtistProfile, updateProfile } = require('../controllers/artistController');
+const { signup,signin,signout, getByIdArtist, getAllArtist, deleteArtistProfile, updateProfile } = require('../controllers/artistController');
 const { uploadProfilePicture, uploadHeaderImage } = require('../controllers/artistController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
@@ -8,6 +8,9 @@ const router = express.Router();
 router.post('/signup', signup);
 
 router.post('/signin', signin);
+
+router.post('/signout', authMiddleware, signout);
+
 
 router.put('/profile', authMiddleware, uploadProfilePicture, uploadHeaderImage, updateProfile);
 

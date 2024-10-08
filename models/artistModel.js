@@ -19,6 +19,7 @@ const artistSchema = new mongoose.Schema({
   artistName: {
     type: String,
     required: true,
+    unique: true,
   },
   bio: {
     type: String,

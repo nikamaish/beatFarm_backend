@@ -115,3 +115,22 @@ exports.signin = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// Logout Function
+exports.signout = (req, res) => {
+  try {
+    // Clear the cookie that contains the JWT token
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set to true in production for HTTPS
+      sameSite: "none",
+    });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};

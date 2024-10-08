@@ -15,6 +15,7 @@ exports.signup = async (req, res) => {
         .status(400)
         .json({ errorMessage: "All required fields must be provided." });
     }
+    
 
     if (password.length < 6) {
       return res
@@ -31,7 +32,11 @@ exports.signup = async (req, res) => {
     if (existingArtist) {
       return res.status(400).json({ errorMessage: "Email already in use." });
     }
-
+    // Check if artist name already exists
+    const existingArtistName = await Artist.findOne({ artistName });
+    if (existingArtistName) {
+      return res.status(400).json({ errorMessage: "Artist name already in use." });
+    }
     // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -112,12 +117,31 @@ exports.signin = async (req, res) => {
         email: artist.email,
         artistName: artist.artistName,
         bio: artist.bio,
-        profilePicture: artist.profilePicture,
-        headerImage: artist.headerImage,
-        socialMediaLinks: artist.socialMediaLinks,
+        // profilePicture: artist.profilePicture,
+        // headerImage: artist.headerImage,
+        // socialMediaLinks: artist.socialMediaLinks,
       },
       token,
     });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// Artist Signout Function
+exports.signout = (req, res) => {
+  try {
+    // Clear the cookie that contains the JWT token
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Set to true in production for HTTPS
+      sameSite: "none",
+    });
+
+    // Respond with a success message
+    res.status(200).json({ message: "Sign out successful" });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server error" });
