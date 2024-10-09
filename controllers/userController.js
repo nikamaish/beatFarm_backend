@@ -134,3 +134,19 @@ exports.signout = (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+exports.userget = async (req, res) => {
+  try {
+    // Assuming req.user contains the decoded token
+    const userId = req.user.id; // or however you store the user ID
+    const user = await User.findById(userId).select('-password'); // Fetch user without password
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ email: user.email }); // Send back user email or other profile info
+  } catch (error) {
+    console.error(error); // Log error for debugging
+    res.status(500).json({ message: 'Server error' });
+  }
+}
