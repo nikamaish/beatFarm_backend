@@ -52,7 +52,7 @@ exports.signup = async (req, res) => {
     const savedArtist = await newArtist.save();
 
     // Generate JWT token
-    const token = jwt.sign({ id: savedArtist._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: savedArtist._id, role: 'artist' }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -98,7 +98,7 @@ exports.signin = async (req, res) => {
     }
 
     // Generate JWT token if credentials are valid
-    const token = jwt.sign({ id: artist._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: artist._id, role: 'artist'}, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -148,19 +148,38 @@ exports.signout = (req, res) => {
   }
 };
 
+
+exports.artistget = async (req, res) => {
+  try {
+    const artistId = req.user.id; // Accessing from req.user
+    const artist = await Artist.findById(artistId).select('-password'); // Fetch artist without password
+    if (!artist) {
+      return res.status(404).json({ message: 'Artist not found' });
+    }
+    res.json({
+      email: artist.email,
+      artistName: artist.artistName,
+      bio: artist.bio,
+      profilePicture: artist.profilePicture,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+// Update Artist Profile Function
 exports.updateProfile = async (req, res) => {
-  const { artistName, bio, socialMediaLinks } = req.body;
+  const { artistName, bio } = req.body;
 
   try {
-    const artistId = req.user.id; // Assuming you've authenticated the user and added user ID to req.user
+    const artistId = req.user.id; // Accessing from req.user
 
     // Prepare the update object
     const updateData = {
       artistName,
       bio,
-      profilePicture: req.file ? req.file.path : undefined, // For profile picture
-      headerImage: req.headerImage ? req.headerImage.path : undefined, // For header image
-      socialMediaLinks,
+      profilePicture: req.file ? req.file.path : undefined,
     };
 
     // Filter out undefined properties to avoid overwriting with null

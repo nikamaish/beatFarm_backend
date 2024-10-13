@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 // Define the artist schema
@@ -27,15 +28,6 @@ const artistSchema = new mongoose.Schema({
   },
   profilePicture: {
     type: String, // You can store the URL of the profile image here
-  },
-  headerImage: {
-    type: String, // You can store the URL of the header image here
-  },
-  socialMediaLinks: {
-    // twitter: { type: String },
-    // instagram: { type: String },
-    facebook: { type: String },
-    website: { type: String },
   },
   createdAt: {
     type: Date,

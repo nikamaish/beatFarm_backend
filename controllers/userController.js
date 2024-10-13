@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {  // Fix the typo 'singup' to 'signup'
     
     // Generate a JWT token for the new user
     const token = jwt.sign(
-      { id: savedUser._id }, // Payload
+      { id: savedUser._id, role: 'user' }, // Payload
       process.env.JWT_SECRET, // Secret key
       { expiresIn: "1h" } // Token expiration time
     );
@@ -89,7 +89,7 @@ exports.signin = async (req, res) => {
 
     // Generate JWT token if credentials are valid
     const token = jwt.sign(
-      { id: user._id }, // Payload: user's ID
+      { id: user._id, role: 'user' }, // Payload: user's ID
       process.env.JWT_SECRET, // Secret key
       { expiresIn: "1h" } // Token expiration time
     );
