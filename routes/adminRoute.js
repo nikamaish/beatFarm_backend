@@ -15,8 +15,8 @@ const adminMiddleware = (req, res, next) => {
 
 router.post('/adminSignIn', adminSignin);
 router.get('/getAllUsers', authMiddleware, adminMiddleware, getAllUsers); // Get all users
-router.delete('/deleteUser', authMiddleware, adminMiddleware, deleteUser); // Delete user by ID
+router.delete('/deleteUser/:id', authMiddleware, adminMiddleware, deleteUser); // Delete user by ID
 router.get('/getAllArtists', authMiddleware, adminMiddleware, getAllArtists); // Get all artists
-router.delete('/deleteArtist', authMiddleware, adminMiddleware, deleteArtist); // Delete artist by ID
+router.delete('/deleteArtist/:id', authMiddleware, adminMiddleware, deleteArtist); // Delete artist by ID
 
 module.exports = router;

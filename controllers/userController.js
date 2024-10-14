@@ -173,8 +173,8 @@ exports.updateUserProfile = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const userId = req.user.id; // or however you store the user ID
-    const deletedUser = await User.findByIdAndDelete(userId);
+    const { id } = req.params; // Get user ID from request parameters
+    const deletedUser = await User.findByIdAndDelete(id);
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
     }

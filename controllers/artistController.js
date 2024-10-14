@@ -216,7 +216,7 @@ exports.getAllArtists = async (req, res) => {
 
 // Delete Artist Function
 exports.deleteArtist = async (req, res) => {
-  const artistId = req.user.id; 
+  const artistId = req.params.id; // Assuming the ID is passed as a URL parameter
 
   try {
     const artist = await Artist.findById(artistId);
