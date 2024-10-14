@@ -4,7 +4,6 @@ const Artist = require("../models/artistModel");
 const multer = require("multer");
 
 // Artist Signup Function
-// Artist Signup Function
 exports.signup = async (req, res) => {
   const { email, password, confirmPassword, artistName } = req.body;
 
@@ -169,7 +168,7 @@ exports.artistget = async (req, res) => {
 }
 
 // Update Artist Profile Function
-exports.updateProfile = async (req, res) => {
+exports.updateArtistProfile = async (req, res) => {
   const { artistName, bio } = req.body;
 
   try {
@@ -204,38 +203,10 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// Get Artist by ID Function
-exports.getByIdArtist = async (req, res) => {
-  const artistId = req.params.id; // Assuming the ID is passed as a URL parameter
-
-  try {
-    const artist = await Artist.findById(artistId);
-
-    if (!artist) {
-      return res.status(404).json({ message: "Artist not found" });
-    }
-
-    res.status(200).json({
-      artist: {
-        id: artist._id,
-        email: artist.email,
-        artistName: artist.artistName,
-        bio: artist.bio,
-        profilePicture: artist.profilePicture,
-        headerImage: artist.headerImage,
-        socialMediaLinks: artist.socialMediaLinks,
-      },
-    });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
 // Get All Artists Function
-exports.getAllArtist = async (req, res) => {
+exports.getAllArtists = async (req, res) => {
   try {
-    const artists = await Artist.find({});
+    const artists = await Artist.find().select("-password"); // Fetch all artists without passwords
         res.status(200).json(artists);
   } catch (error) {
     console.error(error.message);
@@ -244,8 +215,8 @@ exports.getAllArtist = async (req, res) => {
 };
 
 // Delete Artist Function
-exports.deleteArtistProfile = async (req, res) => {
-  const artistId = req.params.id; // Assuming the ID is passed as a URL parameter
+exports.deleteArtist = async (req, res) => {
+  const artistId = req.user.id; 
 
   try {
     const artist = await Artist.findById(artistId);
@@ -277,3 +248,31 @@ const upload = multer({ storage });
 
 exports.uploadProfilePicture = upload.single("profilePicture");
 exports.uploadHeaderImage = upload.single("headerImage");
+
+
+
+// Get Artist by ID Function
+// exports.getByIdArtist = async (req, res) => {
+//   const artistId = req.params.id; // Assuming the ID is passed as a URL parameter
+
+//   try {
+//     const artist = await Artist.findById(artistId);
+
+//     if (!artist) {
+//       return res.status(404).json({ message: "Artist not found" });
+//     }
+
+//     res.status(200).json({
+//       artist: {
+//         id: artist._id,
+//         email: artist.email,
+//         artistName: artist.artistName,
+//         bio: artist.bio,
+//         profilePicture: artist.profilePicture,
+//       },
+//     });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };

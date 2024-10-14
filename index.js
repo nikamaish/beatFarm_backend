@@ -4,6 +4,7 @@ const cors = require('cors'); // Import the cors package
 const connectDB = require('./config/db'); // Import the MongoDB connection function
 const userRoute = require('./routes/userRoute'); // Import the user route
 const artistRoute = require('./routes/artistRoute'); // Import the artist route
+const adminRoute = require('./routes/adminRoute'); // Import the admin route
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(express.json());
 
 app.use('/api/users', userRoute);
 app.use('/api/artists', artistRoute);
+app.use('/api/admin', adminRoute);
 
 app.get('/', (req, res) => {
     res.send('Hello, world!');

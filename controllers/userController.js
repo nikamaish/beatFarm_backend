@@ -150,3 +150,48 @@ exports.userget = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 }
+
+exports.updateUserProfile = async (req, res) => {
+
+  try {
+    const userId = req.user.id; // or however you store the user ID
+    const { email } = req.body;
+    const user = await User.findById(userId); 
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (email) {
+      user.email = email;
+    }
+    const updatedUser = await user.save();
+    res.json({ email: updatedUser.email });
+  } catch (error) {
+    console.error(error); // Log error for debugging
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // or however you store the user ID
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error(error); // Log error for debugging
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select('-password'); // Fetch all users without passwords
+    res.json(users); // Send back the list of users
+  } catch (error) {
+    console.error(error); // Log error for debugging
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
