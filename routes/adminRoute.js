@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllUsers, deleteUser } = require('../controllers/userController');
 const { getAllArtists, deleteArtist } = require('../controllers/artistController');
-const { adminSignin } = require('../controllers/adminController');
+const { adminSignin , editArtist, editUser} = require('../controllers/adminController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -18,5 +18,7 @@ router.get('/getAllUsers', authMiddleware, adminMiddleware, getAllUsers); // Get
 router.delete('/deleteUser/:id', authMiddleware, adminMiddleware, deleteUser); // Delete user by ID
 router.get('/getAllArtists', authMiddleware, adminMiddleware, getAllArtists); // Get all artists
 router.delete('/deleteArtist/:id', authMiddleware, adminMiddleware, deleteArtist); // Delete artist by ID
+router.put('/editUser/:userId', authMiddleware, adminMiddleware, editUser); // Admin edit user
+router.put('/editArtist/:artistId', authMiddleware, adminMiddleware, editArtist); // Admin edit artist
 
 module.exports = router;

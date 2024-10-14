@@ -16,9 +16,8 @@ router.get('/getArtist', authMiddleware, artistget);
 router.put('/updateArtistProfile', authMiddleware, uploadProfilePicture, uploadHeaderImage, updateArtistProfile);
 
 router.get("/getAllArtists", authMiddleware, getAllArtists); // Get all artists
+
 router.delete("/deleteArtist", authMiddleware, deleteArtist); // Delete artist
-
-
 
 
   module.exports = router;
