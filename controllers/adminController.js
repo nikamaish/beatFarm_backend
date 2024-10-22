@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Artist = require("../models/artistModel");
 const User = require("../models/userModel");
+const Plan = require("../models/planModel");
+const Genre = require('../models/genresModel'); // Adjust the path as necessary
 
 exports.adminSignin = async (req, res) => {
   const { email, password } = req.body;
@@ -89,3 +91,158 @@ exports.editArtist = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+exports.addPlan = async (req, res) => {
+  const { name, price } = req.body;
+
+  try {
+    // Create a new plan
+    const newPlan = new Plan({ name, price });
+
+    // Save the plan to the database
+    await newPlan.save();
+
+    // Respond with success and the created plan
+    res.status(201).json({
+      message: "Plan created successfully",
+      plan: newPlan,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+exports.deletePlan = async (req, res) => {
+  const { planId } = req.params; // Extracting the plan ID from request parameters
+
+  try {
+    // Find the plan by ID and delete
+    const deletedPlan = await Plan.findByIdAndDelete(planId);
+
+    // If plan not found
+    if (!deletedPlan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    // Respond with success message
+    res.status(200).json({
+      message: "Plan deleted successfully",
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+exports.editPlan = async (req, res) => {
+  const { planId } = req.params; // Extracting the plan ID from request parameters
+  const { name, price } = req.body; // Fields that can be updated
+
+  try {
+    // Prepare the update object
+    const updateData = { name, price };
+
+    // Filter out undefined or empty properties
+    Object.keys(updateData).forEach(
+      (key) => updateData[key] === undefined && delete updateData[key]
+    );
+
+    // Find the plan by ID and update
+    const updatedPlan = await Plan.findByIdAndUpdate(planId, updateData, { new: true });
+
+    // If plan not found
+    if (!updatedPlan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    // Respond with success and updated plan info
+    res.status(200).json({
+      message: "Plan updated successfully",
+      plan: updatedPlan,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getAllPlans = async (req, res) => {
+  try {
+    // Fetch all plans from the database
+    const plans = await Plan.find();
+
+    // Respond with the list of plans
+    res.status(200).json({
+      message: "Plans fetched successfully",
+      plans,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+// GET all genres
+exports.getAllGenres = async (req, res) => {
+    try {
+        const genres = await Genre.find();
+        res.status(200).json(genres);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// GET a specific genre by ID
+exports.getGenreById = async (req, res) => {
+    try {
+        const genre = await Genre.findById(req.params.id);
+        if (!genre) return res.status(404).json({ message: 'Genre not found' });
+        res.status(200).json(genre);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// POST a new genre
+exports.createGenre = async (req, res) => {
+    const genre = new Genre({
+        name: req.body.name,
+        numberOfArtists: req.body.numberOfArtists,
+    });
+
+    try {
+        const savedGenre = await genre.save();
+        res.status(201).json(savedGenre);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// PUT to update an existing genre
+exports.updateGenre = async (req, res) => {
+    try {
+        const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedGenre) return res.status(404).json({ message: 'Genre not found' });
+        res.status(200).json(updatedGenre);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// DELETE a genre
+exports.deleteGenre = async (req, res) => {
+    try {
+        const deletedGenre = await Genre.findByIdAndDelete(req.params.id);
+        if (!deletedGenre) return res.status(404).json({ message: 'Genre not found' });
+        res.status(204).send();
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+

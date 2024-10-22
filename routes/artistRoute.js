@@ -13,7 +13,7 @@ router.post('/signout', authMiddleware, signout);
 
 router.get('/getArtist', authMiddleware, artistget);
 
-router.put('/updateArtistProfile', authMiddleware, uploadProfilePicture, uploadHeaderImage, updateArtistProfile);
+router.put('/updateArtistProfile', authMiddleware, uploadProfilePicture, updateArtistProfile);
 
 router.get("/getAllArtists", authMiddleware, getAllArtists); // Get all artists
 

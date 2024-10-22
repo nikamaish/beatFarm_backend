@@ -247,7 +247,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 exports.uploadProfilePicture = upload.single("profilePicture");
-exports.uploadHeaderImage = upload.single("headerImage");
+// exports.uploadHeaderImage = upload.single("headerImage");
 
 
 
