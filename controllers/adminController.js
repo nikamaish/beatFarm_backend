@@ -3,6 +3,8 @@ const Artist = require("../models/artistModel");
 const User = require("../models/userModel");
 const Plan = require("../models/planModel");
 const Genre = require('../models/genresModel'); // Adjust the path as necessary
+const Song = require('../models/songModel'); // Ensure the Song model is imported
+
 
 exports.adminSignin = async (req, res) => {
   const { email, password } = req.body;
@@ -249,19 +251,33 @@ exports.deleteGenre = async (req, res) => {
 
 
 exports.approveSong = async (req, res) => {
+  const { songId } = req.params; // Assume the song ID is passed as a route parameter
+
   try {
-      const songId = req.params.id;
+    const song = await Song.findById(songId);
 
-      // Find the song and update its approval status
-      const song = await Song.findByIdAndUpdate(songId, { isApproved: true }, { new: true });
+    if (!song) {
+      return res.status(404).json({ message: "Song not found" });
+    }
 
-      if (!song) {
-          return res.status(404).send('Song not found');
-      }
+    // Update the isApproved field
+    song.isApproved = true;
+    await song.save();
 
-      res.status(200).send('Song approved successfully');
+    res.status(200).json({ message: "Song approved successfully.", song });
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+exports.getSongs = async (req, res) => {
+  try {
+    const songs = await Song.find({ isApproved: true }); // Only fetch approved songs
+    res.status(200).json(songs);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
   }
 };

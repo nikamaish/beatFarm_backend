@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllUsers, deleteUser } = require('../controllers/userController');
 const { getAllArtists, deleteArtist } = require('../controllers/artistController');
-const { adminSignin , editArtist, editUser, addPlan, editPlan, deletePlan, getAllPlans} = require('../controllers/adminController');
+const { adminSignin , editArtist, editUser, addPlan, editPlan, deletePlan, getAllPlans, approveSong, getSongs} = require('../controllers/adminController');
 const {
   getAllGenres,
   getGenreById,
@@ -41,6 +41,9 @@ router.post('/createGenres', authMiddleware, adminMiddleware, createGenre);
 router.put('/editGenres/:id', authMiddleware, adminMiddleware, updateGenre);
 router.delete('/deleteGenres/:id', authMiddleware, adminMiddleware, deleteGenre);
 
+
+router.put('/approve/:songId', authMiddleware, adminMiddleware, approveSong);
+router.get('/',authMiddleware,adminMiddleware, getSongs)
 
 
 module.exports = router;

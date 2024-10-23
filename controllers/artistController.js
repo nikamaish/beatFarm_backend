@@ -277,12 +277,24 @@ exports.uploadSong = async (req, res) => {
   }
 
   try {
+    // Check for existing song with the same title, artist, and genre
+    const existingSong = await Song.findOne({
+      title,
+      artist: artistId,
+      genre,
+    });
+
+    if (existingSong) {
+      return res.status(400).json({ message: "This song already exists." });
+    }
+
     // Create a new song entry in the database
     const newSong = new Song({
       title,
       genre,
       artist: artistId, // Associate song with the logged-in artist
       filePath: req.file.path, // Store the file path where the song is saved
+      isApproved: false, // Set to false until admin approval
     });
 
     // Save the new song to the database
@@ -290,7 +302,7 @@ exports.uploadSong = async (req, res) => {
 
     // Send a success response with the song data
     res.status(201).json({
-      message: "Song uploaded successfully",
+      message: "Song uploaded successfully and is awaiting approval.",
       song: {
         title: newSong.title,
         genre: newSong.genre,
