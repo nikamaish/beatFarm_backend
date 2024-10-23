@@ -9,6 +9,7 @@ const {
   updateGenre,
   deleteGenre,
 } = require('../controllers/adminController'); // Adjust the path as necessary
+
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
@@ -39,6 +40,8 @@ router.get('/getGenres/:id', authMiddleware, adminMiddleware, getGenreById);
 router.post('/createGenres', authMiddleware, adminMiddleware, createGenre);
 router.put('/editGenres/:id', authMiddleware, adminMiddleware, updateGenre);
 router.delete('/deleteGenres/:id', authMiddleware, adminMiddleware, deleteGenre);
+
+
 
 module.exports = router;
 

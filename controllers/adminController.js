@@ -246,3 +246,22 @@ exports.deleteGenre = async (req, res) => {
     }
 };
 
+
+
+exports.approveSong = async (req, res) => {
+  try {
+      const songId = req.params.id;
+
+      // Find the song and update its approval status
+      const song = await Song.findByIdAndUpdate(songId, { isApproved: true }, { new: true });
+
+      if (!song) {
+          return res.status(404).send('Song not found');
+      }
+
+      res.status(200).send('Song approved successfully');
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
+};

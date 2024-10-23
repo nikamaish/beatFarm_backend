@@ -2,6 +2,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Artist = require("../models/artistModel");
 const multer = require("multer");
+const Song = require('../models/songModel'); // Ensure the Song model is imported
+const path = require('path'); // Import path module
+
 
 // Artist Signup Function
 exports.signup = async (req, res) => {
@@ -178,7 +181,7 @@ exports.updateArtistProfile = async (req, res) => {
     const updateData = {
       artistName,
       bio,
-      profilePicture: req.file ? req.file.path : undefined,
+      profilePicture: req.file ? req.file.path : undefined, // Update profile picture only if uploaded
     };
 
     // Filter out undefined properties to avoid overwriting with null
@@ -202,6 +205,7 @@ exports.updateArtistProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Get All Artists Function
 exports.getAllArtists = async (req, res) => {
@@ -235,44 +239,68 @@ exports.deleteArtist = async (req, res) => {
 };
 
 // Setup for storing uploaded images
-const storage = multer.diskStorage({
+// Setup for storing uploaded images
+const profilePictureStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Set the upload folder
+    cb(null, 'uploads/profile-pictures/'); // Store profile pictures in this folder
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); // Unique filename
-  },
+    cb(null, Date.now() + '-' + file.originalname); // Use a unique filename
+  }
 });
 
-const upload = multer({ storage });
+// Upload profile picture middleware
+exports.uploadProfilePicture = multer({
+  storage: profilePictureStorage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  fileFilter: (req, file, cb) => {
+    const fileTypes = /jpeg|jpg|png/; // Allowed image formats
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = fileTypes.test(file.mimetype);
 
-exports.uploadProfilePicture = upload.single("profilePicture");
-// exports.uploadHeaderImage = upload.single("headerImage");
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb('Error: Only images (JPEG, PNG) are allowed!');
+    }
+  }
+}).single('profilePicture'); // The field name for profile picture uploads
 
 
+exports.uploadSong = async (req, res) => {
+  const { title, genre } = req.body;
+  const artistId = req.user.id; // Assuming `req.user` contains the artist's ID
 
-// Get Artist by ID Function
-// exports.getByIdArtist = async (req, res) => {
-//   const artistId = req.params.id; // Assuming the ID is passed as a URL parameter
+  // Check if the song file was uploaded
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
 
-//   try {
-//     const artist = await Artist.findById(artistId);
+  try {
+    // Create a new song entry in the database
+    const newSong = new Song({
+      title,
+      genre,
+      artist: artistId, // Associate song with the logged-in artist
+      filePath: req.file.path, // Store the file path where the song is saved
+    });
 
-//     if (!artist) {
-//       return res.status(404).json({ message: "Artist not found" });
-//     }
+    // Save the new song to the database
+    await newSong.save();
 
-//     res.status(200).json({
-//       artist: {
-//         id: artist._id,
-//         email: artist.email,
-//         artistName: artist.artistName,
-//         bio: artist.bio,
-//         profilePicture: artist.profilePicture,
-//       },
-//     });
-//   } catch (error) {
-//     console.error(error.message);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+    // Send a success response with the song data
+    res.status(201).json({
+      message: "Song uploaded successfully",
+      song: {
+        title: newSong.title,
+        genre: newSong.genre,
+        artist: newSong.artist,
+        filePath: newSong.filePath,
+        uploadDate: newSong.uploadDate,
+      },
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+};
