@@ -30,6 +30,26 @@ exports.adminSignin = async (req, res) => {
   res.status(200).json({ message: "Admin signed in successfully", token });
 };
 
+exports.getAdmin = async (req, res) => {
+  try {
+    // Assuming you have middleware that verifies the token and sets req.user
+    const { role } = req.user; // Get the role from the token payload
+
+    if (role !== 'admin') {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    // Directly return the admin's email from environment variables
+    const adminEmail = process.env.ADMIN_EMAIL;
+
+    // Respond with the admin's email
+    return res.status(200).json({ email: adminEmail });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.editUser = async (req, res) => {
   const { userId } = req.params; // Extracting the user ID from request parameters
   const { email } = req.body; // Fields that can be updated
