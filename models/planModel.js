@@ -12,7 +12,17 @@ const planSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    lastUpdated: {
+        type: Date,
+        default: Date.now
     }
+});
+
+// Middleware to update the lastUpdated field before saving
+planSchema.pre('save', function(next) {
+    this.lastUpdated = Date.now();
+    next();
 });
 
 module.exports = mongoose.model('Plan', planSchema);

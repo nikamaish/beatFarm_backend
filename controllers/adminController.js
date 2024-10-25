@@ -118,13 +118,8 @@ exports.addPlan = async (req, res) => {
   const { name, price } = req.body;
 
   try {
-    // Create a new plan
-    const newPlan = new Plan({ name, price });
-
-    // Save the plan to the database
+    const newPlan = new Plan({ name, price }); // No need to set lastUpdated
     await newPlan.save();
-
-    // Respond with success and the created plan
     res.status(201).json({
       message: "Plan created successfully",
       plan: newPlan,
@@ -158,13 +153,11 @@ exports.deletePlan = async (req, res) => {
   }
 };
 
-
 exports.editPlan = async (req, res) => {
-  const { planId } = req.params; // Extracting the plan ID from request parameters
-  const { name, price } = req.body; // Fields that can be updated
+  const { planId } = req.params;
+  const { name, price } = req.body;
 
   try {
-    // Prepare the update object
     const updateData = { name, price };
 
     // Filter out undefined or empty properties
@@ -172,15 +165,12 @@ exports.editPlan = async (req, res) => {
       (key) => updateData[key] === undefined && delete updateData[key]
     );
 
-    // Find the plan by ID and update
     const updatedPlan = await Plan.findByIdAndUpdate(planId, updateData, { new: true });
 
-    // If plan not found
     if (!updatedPlan) {
       return res.status(404).json({ message: "Plan not found" });
     }
 
-    // Respond with success and updated plan info
     res.status(200).json({
       message: "Plan updated successfully",
       plan: updatedPlan,

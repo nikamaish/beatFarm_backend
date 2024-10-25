@@ -8,7 +8,7 @@ const {
   createGenre,
   updateGenre,
   deleteGenre,
-} = require('../controllers/adminController'); // Adjust the path as necessary
+} = require('../controllers/adminController'); 
 
 const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
@@ -24,16 +24,18 @@ const adminMiddleware = (req, res, next) => {
 
 router.post('/signin', adminSignin);
 router.get('/getAdmin',authMiddleware,getAdmin)
-router.get('/getAllUsers', authMiddleware, adminMiddleware, getAllUsers); // Get all users
-router.delete('/deleteUser/:id', authMiddleware, adminMiddleware, deleteUser); // Delete user by ID
-router.get('/getAllArtists', authMiddleware, adminMiddleware, getAllArtists); // Get all artists
-router.delete('/deleteArtist/:id', authMiddleware, adminMiddleware, deleteArtist); // Delete artist by ID
-router.put('/editUser/:userId', authMiddleware, adminMiddleware, editUser); // Admin edit user
-router.put('/editArtist/:artistId', authMiddleware, adminMiddleware, editArtist); // Admin edit artist
+
+router.get('/getAllUsers', authMiddleware, adminMiddleware, getAllUsers); 
+router.delete('/deleteUser/:id', authMiddleware, adminMiddleware, deleteUser); 
+router.get('/getAllArtists', authMiddleware, adminMiddleware, getAllArtists); 
+router.delete('/deleteArtist/:id', authMiddleware, adminMiddleware, deleteArtist); 
+router.put('/editUser/:userId', authMiddleware, adminMiddleware, editUser); 
+router.put('/editArtist/:artistId', authMiddleware, adminMiddleware, editArtist); 
+
 router.post('/addPlan', authMiddleware, adminMiddleware, addPlan); 
-router.put('/editPlan/:planId', authMiddleware, adminMiddleware, editPlan); // Admin edit artist
-router.delete('/deletePlan/:planId', authMiddleware, adminMiddleware, deletePlan); // Admin edit artist
-router.get('/getAllPlans', authMiddleware, adminMiddleware, getAllPlans); // Admin edit artist
+router.put('/editPlan/:planId', authMiddleware, adminMiddleware, editPlan); 
+router.delete('/deletePlan/:planId', authMiddleware, adminMiddleware, deletePlan); 
+router.get('/getAllPlans', authMiddleware, adminMiddleware, getAllPlans); 
 
 
 router.get('/getAllGenres', authMiddleware, adminMiddleware, getAllGenres);
