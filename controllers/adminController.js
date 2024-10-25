@@ -237,15 +237,26 @@ exports.createGenre = async (req, res) => {
 };
 
 // PUT to update an existing genre
+// PUT to update an existing genre
 exports.updateGenre = async (req, res) => {
-    try {
-        const updatedGenre = await Genre.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedGenre) return res.status(404).json({ message: 'Genre not found' });
-        res.status(200).json(updatedGenre);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+  try {
+      // Include lastUpdated in the update
+      const updatedGenre = await Genre.findByIdAndUpdate(
+          req.params.id,
+          {
+              ...req.body,             // Spread the existing fields from req.body
+              lastUpdated: Date.now()  // Update the lastUpdated field to the current date
+          },
+          { new: true }
+      );
+      
+      if (!updatedGenre) return res.status(404).json({ message: 'Genre not found' });
+      res.status(200).json(updatedGenre);
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
 };
+
 
 // DELETE a genre
 exports.deleteGenre = async (req, res) => {
