@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 
 // Define the artist schema
@@ -27,12 +26,8 @@ const artistSchema = new mongoose.Schema({
     maxlength: 500,
   },
   profilePicture: {
-    type: String, // You can store the URL of the profile image here
+    type: String, // URL of the profile image
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+}, { timestamps: true }); // Enables 'createdAt' and 'updatedAt'
 
 module.exports = mongoose.model('Artist', artistSchema);

@@ -152,24 +152,31 @@ exports.userget = async (req, res) => {
 }
 
 exports.updateUserProfile = async (req, res) => {
-
   try {
-    const userId = req.user.id; // or however you store the user ID
+    const userId = req.user.id;
     const { email } = req.body;
-    const user = await User.findById(userId); 
+    
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    
     if (email) {
       user.email = email;
     }
-    const updatedUser = await user.save();
-    res.json({ email: updatedUser.email });
+
+    const updatedUser = await user.save(); // updatedAt will automatically be set
+    res.json({
+      email: updatedUser.email,
+      createdAt: updatedUser.createdAt,
+      updatedAt: updatedUser.updatedAt, // Return updatedAt and createdAt
+    });
   } catch (error) {
-    console.error(error); // Log error for debugging
+    console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 }
+
 
 exports.deleteUser = async (req, res) => {
   try {
