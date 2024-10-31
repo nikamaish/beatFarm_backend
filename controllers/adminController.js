@@ -271,8 +271,9 @@ exports.deleteGenre = async (req, res) => {
 
 
 
-exports.approveSong = async (req, res) => {
-  const { songId } = req.params; // Assume the song ID is passed as a route parameter
+exports.approveOrRejectSong = async (req, res) => {
+  const { songId } = req.params;
+  const { action, rejectedReason } = req.body; // action can be "approve" or "reject"
 
   try {
     const song = await Song.findById(songId);
@@ -281,11 +282,22 @@ exports.approveSong = async (req, res) => {
       return res.status(404).json({ message: "Song not found" });
     }
 
-    // Update the isApproved field
-    song.isApproved = true;
+    if (action === "approve") {
+      song.status = "approved";
+      song.rejectedReason = null; // Clear any rejection reason
+    } else if (action === "reject") {
+      song.status = "rejected";
+      song.rejectedReason = rejectedReason || "No reason provided";
+    } else {
+      return res.status(400).json({ message: "Invalid action. Use 'approve' or 'reject'." });
+    }
+
     await song.save();
 
-    res.status(200).json({ message: "Song approved successfully.", song });
+    res.status(200).json({
+      message: `Song ${action}d successfully.`,
+      song,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: "Server error" });
@@ -293,9 +305,10 @@ exports.approveSong = async (req, res) => {
 };
 
 
+
 exports.getSongs = async (req, res) => {
   try {
-    const songs = await Song.find({ isApproved: true }); // Only fetch approved songs
+    const songs = await Song.find(); // Only fetch approved songs
     res.status(200).json(songs);
   } catch (error) {
     console.error(error.message);
