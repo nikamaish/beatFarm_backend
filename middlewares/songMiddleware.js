@@ -26,6 +26,6 @@ const uploadSong = multer({
       cb(new Error("Error: Only audio files (MP3, WAV) are allowed!"));
     }
   }
-}).single("song"); // Expecting the file field name to be 'song'
+}).single("file"); // Expecting the file field name to be 'song'
 
 module.exports = uploadSong;

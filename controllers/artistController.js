@@ -302,7 +302,7 @@ exports.uploadSong = async (req, res) => {
 
     // Send a success response with the song data
     res.status(201).json({
-      message: "Song uploaded successfully and is awaiting approval.",
+      message: "Song uploaded successfully and is awaiting for approval.",
       song: {
         title: newSong.title,
         genre: newSong.genre,
